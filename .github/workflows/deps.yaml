@@ -113,7 +113,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - shell: bash
-        run: make deps.linux.arm64
+        run: make deps.windows.amd64
       - uses: actions/upload-artifact@v3
         with:
           name: windows_amd64
