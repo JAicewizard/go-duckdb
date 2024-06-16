@@ -58,6 +58,14 @@ deps.linux.arm64: duckdb
 	cp duckdb/build/release/libduckdb_bundle.a deps/linux_arm64/libduckdb.a
 
 .PHONY: deps.freebsd.amd64
+deps.windows.amd64: duckdb
+	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "windows" ]; then echo "Error: must run build on windows"; false; fi
+
+	cd duckdb && \
+	CFLAGS="-O3" CXXFLAGS="-O3" ${DUCKDB_COMMON_BUILD_FLAGS} gmake bundle-library -j 2
+	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
+
+.PHONY: deps.freebsd.amd64
 deps.freebsd.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "freebsd" ]; then echo "Error: must run build on freebsd"; false; fi
 
