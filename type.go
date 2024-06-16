@@ -157,8 +157,8 @@ func tryGetDuckdbTypeFromValue(rt reflect.Type) (C.duckdb_logical_type, error) {
 			}
 		}
 
-		types := (*[1 << 31]C.duckdb_logical_type)(C.malloc(C.ulong(uintptr(len(fields)) * unsafe.Sizeof(C.duckdb_logical_type(nil)))))
-		names := (*[1 << 31]*C.char)(C.malloc(C.ulong(uintptr(len(fields)) * unsafe.Sizeof((*C.char)(nil)))))
+		types := (*[1 << 31]C.duckdb_logical_type)(C.malloc(C.size_t(uintptr(len(fields)) * unsafe.Sizeof(C.duckdb_logical_type(nil)))))
+		names := (*[1 << 31]*C.char)(C.malloc(C.size_t(uintptr(len(fields)) * unsafe.Sizeof((*C.char)(nil)))))
 		defer C.free(unsafe.Pointer(types))
 		defer C.free(unsafe.Pointer(names))
 		for i, field := range fields {
