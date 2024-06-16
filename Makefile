@@ -60,9 +60,12 @@ deps.linux.arm64: duckdb
 .PHONY: deps.freebsd.amd64
 deps.windows.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "mingw64_nt-10.0-20348" ]; then echo "Error: must run build on windows"; false; fi
+	
+	cat duckdb/Makefile
 
 	cd duckdb && \
-	CFLAGS="-O3" CXXFLAGS="-O3" ${DUCKDB_COMMON_BUILD_FLAGS} gmake bundle-library -j 2
+	${DUCKDB_COMMON_BUILD_FLAGS} gmake bundle-library -j 2
+	ls duckdb/build/release
 	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
 
 .PHONY: deps.freebsd.amd64
