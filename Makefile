@@ -66,13 +66,16 @@ deps.windows.amd64: duckdb
 	cd duckdb && \
 	${DUCKDB_COMMON_BUILD_FLAGS} gmake release -j 2
 	ls duckdb/build/release
-	ls duckdb/build/release/third_party
-	ls duckdb/build/release/third_party/fastpforlib
+	ls duckdb/build/release/third_party/fmt
+	ls duckdb/build/release/third_party/fmt/Release
+	ls duckdb/build/release/extension
+	ls duckdb/build/release/extension/parquet
+	ls duckdb/build/release/extension/parquet/Release
 	cd duckdb/build/release && \
 		mkdir -p bundle && \
 		cp src/Release/duckdb_static.lib bundle/. && \
-		cp third_party/*/libduckdb_*.lib bundle/. && \
-		cp extension/*/lib*_extension.lib bundle/. && \
+		cp third_party/*/Release/duckdb_*.lib bundle/. && \
+		cp extension/*/Release/lib*_extension.lib bundle/. && \
 		cd bundle && \
 		find . -name '*.lib' -exec ${AR} -x {} \; && \
 		${AR} cr ../libduckdb_bundle.a *.o
