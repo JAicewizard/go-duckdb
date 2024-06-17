@@ -64,8 +64,9 @@ deps.windows.amd64: duckdb
 	cat duckdb/Makefile
 
 	cd duckdb && \
-	${DUCKDB_COMMON_BUILD_FLAGS} gmake bundle-library -j 2
+	${DUCKDB_COMMON_BUILD_FLAGS} gmake release -j 2
 	ls duckdb/build/release
+	ls duckdb/build/release/src
 	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
 
 .PHONY: deps.freebsd.amd64
