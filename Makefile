@@ -78,8 +78,9 @@ deps.windows.amd64: duckdb
 		cp extension/*/Release/*_extension.lib bundle/.
 	cd duckdb/build/release/bundle && \
 		find . -name '*.lib' -exec ${AR} -x {} \;
+	ls duckdb/build/release/bundle
 	cd duckdb/build/release/bundle && \
-		${AR} cr ../libduckdb_bundle.a *.o
+		${AR} cr ../libduckdb_bundle.a *.obj
 	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
 
 .PHONY: deps.freebsd.amd64
