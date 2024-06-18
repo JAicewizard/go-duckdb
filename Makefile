@@ -28,7 +28,7 @@ DUCKDB_COMMON_BUILD_FLAGS := BUILD_SHELL=0 BUILD_UNITTESTS=0 DUCKDB_PLATFORM=any
 .PHONY: deps.darwin.amd64
 deps.darwin.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "darwin" ]; then echo "Error: must run build on darwin"; false; fi
-	mkdir deps/darwin_amd64
+	mkdir -p deps/darwin_amd64
 
 	cd duckdb && \
 	CFLAGS="-target x86_64-apple-macos11 -O3" CXXFLAGS="-target x86_64-apple-macos11 -O3" ${DUCKDB_COMMON_BUILD_FLAGS} make bundle-library -j 2
@@ -37,7 +37,7 @@ deps.darwin.amd64: duckdb
 .PHONY: deps.darwin.arm64
 deps.darwin.arm64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "darwin" ]; then echo "Error: must run build on darwin"; false; fi
-	mkdir deps/darwin_arm64
+	mkdir -p deps/darwin_arm64
 
 	cd duckdb && \
 	CFLAGS="-target arm64-apple-macos11 -O3" CXXFLAGS="-target arm64-apple-macos11 -O3" ${DUCKDB_COMMON_BUILD_FLAGS}  make bundle-library -j 2
@@ -46,7 +46,7 @@ deps.darwin.arm64: duckdb
 .PHONY: deps.linux.amd64
 deps.linux.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "linux" ]; then echo "Error: must run build on linux"; false; fi
-	mkdir deps/linux_amd64
+	mkdir -p deps/linux_amd64
 
 	cd duckdb && \
 	CFLAGS="-O3" CXXFLAGS="-O3" ${DUCKDB_COMMON_BUILD_FLAGS} make bundle-library -j 2
@@ -55,7 +55,7 @@ deps.linux.amd64: duckdb
 .PHONY: deps.linux.arm64
 deps.linux.arm64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "linux" ]; then echo "Error: must run build on linux"; false; fi
-	mkdir deps/linux_arm64
+	mkdir -p deps/linux_arm64
 
 	cd duckdb && \
 	CC="aarch64-linux-gnu-gcc" CXX="aarch64-linux-gnu-g++" CFLAGS="-O3" CXXFLAGS="-O3" ${DUCKDB_COMMON_BUILD_FLAGS} make bundle-library -j 2
@@ -64,17 +64,10 @@ deps.linux.arm64: duckdb
 .PHONY: deps.freebsd.amd64
 deps.windows.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "mingw64_nt-10.0-20348" ]; then echo "Error: must run build on windows"; false; fi
+	mkdir -p deps/windows_amd64
 	
-	cat duckdb/Makefile
-
 	cd duckdb && \
 	${DUCKDB_COMMON_BUILD_FLAGS} gmake release -j 2
-	ls duckdb/build/release
-	ls duckdb/build/release/third_party/fmt
-	ls duckdb/build/release/third_party/fmt/Release
-	ls duckdb/build/release/extension
-	ls duckdb/build/release/extension/parquet
-	ls duckdb/build/release/extension/parquet/Release
 	cd duckdb/build/release && \
 		mkdir -p bundle && \
 		cp src/Release/duckdb_static.lib bundle/. && \
@@ -82,16 +75,14 @@ deps.windows.amd64: duckdb
 		cp extension/*/Release/*_extension.lib bundle/.
 	cd duckdb/build/release/bundle && \
 		find . -name '*.lib' -exec ${AR} -x {} \;
-	ls duckdb/build/release/bundle
 	cd duckdb/build/release/bundle && \
 		${AR} cr ../libduckdb_bundle.a *.obj
-	mkdir deps/windows_amd64
 	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
 
 .PHONY: deps.freebsd.amd64
 deps.freebsd.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "freebsd" ]; then echo "Error: must run build on freebsd"; false; fi
-	mkdir deps/freebsd_amd64
+	mkdir -p deps/freebsd_amd64
 
 	cd duckdb && \
 	CFLAGS="-O3" CXXFLAGS="-O3" ${DUCKDB_COMMON_BUILD_FLAGS} gmake bundle-library -j 2
