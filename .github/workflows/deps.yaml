@@ -159,7 +159,7 @@ jobs:
         with:
           name: windows_amd64
           path: deps/windows_amd64
-       - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v3
         with:
           name: freebsd_amd64
           path: deps/freebsd_amd64
