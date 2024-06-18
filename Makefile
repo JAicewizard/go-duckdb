@@ -75,9 +75,10 @@ deps.windows.amd64: duckdb
 		mkdir -p bundle && \
 		cp src/Release/duckdb_static.lib bundle/. && \
 		cp third_party/*/Release/duckdb_*.lib bundle/. && \
-		cp extension/*/Release/*_extension.lib bundle/. && \
-		cd bundle && \
-		find . -name '*.lib' -exec ${AR} -x {} \; && \
+		cp extension/*/Release/*_extension.lib bundle/.
+	cd duckdb/build/release/bundle && \
+		find . -name '*.lib' -exec ${AR} -x {} \;
+	cd duckdb/build/release/bundle && \
 		${AR} cr ../libduckdb_bundle.a *.o
 	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
 
