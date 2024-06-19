@@ -163,6 +163,14 @@ jobs:
         with:
           name: freebsd_amd64
           path: deps/freebsd_amd64
+      - shell: bash
+        run: |
+          git lfs track deps/darwin_amd64/libduckdb.a
+          git lfs track deps/darwin_arm64/libduckdb.a
+          git lfs track deps/linux_amd64/libduckdb.a
+          git lfs track deps/linux_arm64/libduckdb.a
+          git lfs track deps/windows_amd64/libduckdb.a
+          git lfs track deps/freebsd_amd64/libduckdb.a
       - name: Push static libraries
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
