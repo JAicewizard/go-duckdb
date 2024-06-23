@@ -83,8 +83,7 @@ deps.windows.amd64: duckdb
 	mv duckdb/build/release/libduckdb_bundle.a tmp/libduckdb_bundle.a
 	${AR} -x tmp/libduckdb_bundle.a
 
-	num=0 \
-		for file in tmp/*.obj; do echo $$file; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$num+1; done
+	num=0; for file in tmp/*.obj; do echo $$file; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$num+1; done
 	cp duckdb/build/release/libduckdb_*.a deps/windows_amd64/
 
 	
