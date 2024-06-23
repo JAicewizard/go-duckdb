@@ -132,7 +132,7 @@ jobs:
           rm -f deps/darwin_arm64/libduckdb.a
           rm -f deps/linux_amd64/libduckdb.a
           rm -f deps/linux_arm64/libduckdb.a
-          rm -f deps/windows_amd64/libduckdb.a
+          rm -f deps/windows_amd64/libduckdb_*.a
           rm -f deps/freebsd_amd64/libduckdb.a
           rm -f duckdb.h
       - uses: actions/download-artifact@v3
@@ -165,12 +165,12 @@ jobs:
           path: deps/freebsd_amd64
       - shell: bash
         run: |
-          git lfs track deps/darwin_amd64/libduckdb.a
-          git lfs track deps/darwin_arm64/libduckdb.a
-          git lfs track deps/linux_amd64/libduckdb.a
-          git lfs track deps/linux_arm64/libduckdb.a
-          git lfs track deps/windows_amd64/libduckdb.a
-          git lfs track deps/freebsd_amd64/libduckdb.a
+          git add deps/darwin_amd64/libduckdb.a
+          git add deps/darwin_arm64/libduckdb.a
+          git add deps/linux_amd64/libduckdb.a
+          git add deps/linux_arm64/libduckdb.a
+          git add deps/windows_amd64/libduckdb_*.a
+          git add deps/freebsd_amd64/libduckdb.a
       - name: Push static libraries
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
