@@ -84,7 +84,7 @@ deps.windows.amd64: duckdb
 	${AR} -x tmp/libduckdb_bundle.a
 
 	num=0 \
-	for file in tmp; do \
+	for file in tmp/*.obj; do \
 		if [[ $$file == *.obj ]]; then \
 			${AR} cr tmp/libduckdb_$$num.a \
 			num = $$num+1 \
