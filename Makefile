@@ -84,7 +84,7 @@ deps.windows.amd64: duckdb
 	cd tmp && ${AR} -x libduckdb_bundle.a
 	
 	ls tmp
-	num=0; for file in tmp/*.obj; do echo $$file; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$num+1; done
+	num=0; for file in tmp/*.obj; do echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
 	cp duckdb/build/release/libduckdb_*.a deps/windows_amd64/
 
 	
