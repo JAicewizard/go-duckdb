@@ -66,6 +66,7 @@ deps.windows.amd64: duckdb
 	if [ "$(shell uname -s | tr '[:upper:]' '[:lower:]')" != "mingw64_nt-10.0-20348" ]; then echo "Error: must run build on windows"; false; fi
 	mkdir -p deps/windows_amd64
 	
+	# this is just code copied from duckdb and fixed for windows. Would like to not change this, and use `make bundle-library` once its fixed.
 	cd duckdb && \
 	${DUCKDB_COMMON_BUILD_FLAGS} gmake release -j 2
 	cd duckdb/build/release && \
@@ -77,7 +78,21 @@ deps.windows.amd64: duckdb
 		find . -name '*.lib' -exec ${AR} -x {} \;
 	cd duckdb/build/release/bundle && \
 		${AR} cr ../libduckdb_bundle.a *.obj
-	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
+
+	mkdir tmp
+	mv duckdb/build/release/libduckdb_bundle.a tmp/libduckdb_bundle.a
+	${AR} -x tmp/libduckdb_bundle.a
+
+	num=0 \
+	for file in tmp ; do \
+		if [[ $file == *.obj]] then \
+			${AR} cr tmp/libduckdb_$num.a \
+			num = $num+1 \
+		fi;\
+    done
+	cp duckdb/build/release/libduckdb_*.a deps/windows_amd64/
+
+	
 
 .PHONY: deps.freebsd.amd64
 deps.freebsd.amd64: duckdb
