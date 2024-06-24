@@ -84,10 +84,14 @@ deps.windows.amd64: duckdb
 	cd tmp && ${AR} -x libduckdb_bundle.a
 	rm tmp/libduckdb_bundle.a	
 	ls tmp
-	num=0; for file in tmp/*.obj; do echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
+	
+	sed -i '11s/libduckdb_*.a//' cgo_static.go
+	num=0; for file in tmp/*.obj; do sed -i '11s/LDFLAGS: /LDFLAGS: -lduckdb_$$num/' cgo_static.go; echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
 
 	ls tmp
 	cp tmp/libduckdb_*.a deps/windows_amd64/
+
+
 
 	
 

@@ -171,6 +171,7 @@ jobs:
           git add deps/linux_arm64/libduckdb.a
           git add deps/windows_amd64/libduckdb_*.a
           git add deps/freebsd_amd64/libduckdb.a
+          git add cgo_statig.go
       - name: Push static libraries
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
