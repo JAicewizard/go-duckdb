@@ -117,7 +117,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: windows_amd64
-          path: deps/windows_amd64/libduckdb.a
+          path: deps/windows_amd64/libduckdb_*.a
           retention-days: 1
   commit:
     runs-on: ubuntu-latest
