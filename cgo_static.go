@@ -1,9 +1,9 @@
-//go:build !duckdb_use_lib && (darwin || (linux && (amd64 || arm64)) || (freebsd && amd64))
+//go:build !duckdb_use_lib && (darwin || (linux && (amd64 || arm64)) || (freebsd && amd64) || (windows && amd64))
 
 package duckdb
 
 /*
-#cgo LDFLAGS: -lduckdb
+#cgo LDFLAGS: -lduckdb -lduckdb_*
 #cgo darwin,amd64 LDFLAGS: -lc++ -L${SRCDIR}/deps/darwin_amd64
 #cgo darwin,arm64 LDFLAGS: -lc++ -L${SRCDIR}/deps/darwin_arm64
 #cgo linux,amd64 LDFLAGS: -lstdc++ -lm -ldl -L${SRCDIR}/deps/linux_amd64
