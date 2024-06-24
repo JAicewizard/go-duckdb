@@ -3,11 +3,12 @@
 package duckdb
 
 /*
-#cgo LDFLAGS: -lduckdb -lduckdb_*
+#cgo LDFLAGS: -lduckdb 
 #cgo darwin,amd64 LDFLAGS: -lc++ -L${SRCDIR}/deps/darwin_amd64
 #cgo darwin,arm64 LDFLAGS: -lc++ -L${SRCDIR}/deps/darwin_arm64
 #cgo linux,amd64 LDFLAGS: -lstdc++ -lm -ldl -L${SRCDIR}/deps/linux_amd64
 #cgo linux,arm64 LDFLAGS: -lstdc++ -lm -ldl -L${SRCDIR}/deps/linux_arm64
+#cgo windows,amd64 LDFLAGS: -lstdc++ -lm -ldl -L${SRCDIR}/deps/windows_amd64
 #cgo freebsd,amd64 LDFLAGS: -lstdc++ -lm -ldl -L${SRCDIR}/deps/freebsd_amd64
 #include <duckdb.h>
 */
