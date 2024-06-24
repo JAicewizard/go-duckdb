@@ -5,4 +5,4 @@ package duckdb
 */
 import "C"
 
-type mallocT = C.ulong
+type mallocT = C.ulonglong
