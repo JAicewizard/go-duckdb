@@ -88,6 +88,8 @@ deps.windows.amd64: duckdb
 	cd tmp && ${AR} -x libduckdb_bundle.a
 	rm tmp/libduckdb_bundle.a	
 	ls tmp
+	num=0; for file in tmp/*.obj; echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
+
 	cp tmp/libduckdb_*.a deps/windows_amd64/
 
 .PHONY: deps.freebsd.amd64
