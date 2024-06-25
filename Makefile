@@ -89,7 +89,7 @@ deps.windows.amd64: duckdb
 	sed -i '11s/libduckdb_*.a//' cgo_static.go
 	cat cgo_static.go
 
-	num=0; for file in tmp/*.obj; do sed -i "11s/LDFLAGS: /LDFLAGS: -lduckdb_$$num/ " cgo_static.go; echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
+	num=0; for file in tmp/*.obj; do sed -i "11s/LDFLAGS: /LDFLAGS: -lduckdb_$$num /" cgo_static.go; echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
 	cat cgo_static.go
 
 	ls tmp
