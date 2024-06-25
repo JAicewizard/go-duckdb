@@ -135,41 +135,40 @@ jobs:
           rm -f deps/windows_amd64/libduckdb_*.a
           rm -f deps/freebsd_amd64/libduckdb.a
           rm -f duckdb.h
-      - uses: actions/download-artifact@v3
-        with:
-          name: duckdb_h
-          path: .
-      - uses: actions/download-artifact@v3
-        with:
-          name: darwin_amd64
-          path: deps/darwin_amd64
-      - uses: actions/download-artifact@v3
-        with:
-          name: darwin_arm64
-          path: deps/darwin_arm64
-      - uses: actions/download-artifact@v3
-        with:
-          name: linux_amd64
-          path: deps/linux_amd64
-      - uses: actions/download-artifact@v3
-        with:
-          name: linux_arm64
-          path: deps/linux_arm64
-      - uses: actions/download-artifact@v3
-        with:
-          name: windows_amd64
-          path: deps/windows_amd64
-      - uses: actions/download-artifact@v3
-        with:
-          name: freebsd_amd64
-          path: deps/freebsd_amd64
+         #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: duckdb_h
+          #          path: .
+          #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: darwin_amd64
+          #          path: deps/darwin_amd64
+          #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: darwin_arm64
+          #          path: deps/darwin_arm64
+          #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: linux_amd64
+          #          path: deps/linux_amd64
+          #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: linux_arm64
+          #          path: deps/linux_arm64
+          #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: windows_amd64
+          #          path: deps/windows_amd64
+          #      - uses: actions/download-artifact@v3
+          #        with:
+          #          name: freebsd_amd64
+          #          path: deps/freebsd_amd64
       - shell: bash
         run: |
           cat cgo_static.go
           sed -i '11s/libduckdb_*.a//' cgo_static.go
           cat cgo_static.go
-        for file in deps/windows_amd64/*.a; do file=${file%.a}; sed -i "11s/LDFLAGS: /LDFLAGS: -l${file#deps/windows_amd64/lib} /" cgo_static.go; done
-        for file in deps/windows_amd64/*.a; do sed -i "11s/LDFLAGS: /LDFLAGS: -l$() /" cgo_static.go; done
+          for file in deps/windows_amd64/*.a; do file=${file%.a}; sed -i "11s/LDFLAGS: /LDFLAGS: -l${file#deps/windows_amd64/lib} /" cgo_static.go; done
           cat cgo_static.go
       - shell: bash
         run: |
