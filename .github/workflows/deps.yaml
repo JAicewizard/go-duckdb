@@ -126,15 +126,15 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
-      - shell: bash
-        run: |
-          rm -f deps/darwin_amd64/libduckdb.a
-          rm -f deps/darwin_arm64/libduckdb.a
-          rm -f deps/linux_amd64/libduckdb.a
-          rm -f deps/linux_arm64/libduckdb.a
-          rm -f deps/windows_amd64/libduckdb_*.a
-          rm -f deps/freebsd_amd64/libduckdb.a
-          rm -f duckdb.h
+          #      - shell: bash
+          #        run: |
+          #rm -f deps/darwin_amd64/libduckdb.a
+          #rm -f deps/darwin_arm64/libduckdb.a
+          #rm -f deps/linux_amd64/libduckdb.a
+          #rm -f deps/linux_arm64/libduckdb.a
+          #rm -f deps/windows_amd64/libduckdb_*.a
+          #rm -f deps/freebsd_amd64/libduckdb.a
+          #rm -f duckdb.h
          #      - uses: actions/download-artifact@v3
           #        with:
           #          name: duckdb_h
