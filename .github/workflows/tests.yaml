@@ -25,6 +25,12 @@ jobs:
 
       - name: "Run Tests"
         run: make test
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test
+          path: go-duckdb.test.exe
+          retention-days: 1
+
   freebsd_amd64:
     runs-on: ubuntu-latest
     steps:

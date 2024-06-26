@@ -117,7 +117,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: windows_amd64
-          path: deps/windows_amd64/libduckdb_*.a
+          path: deps/windows_amd64/libduckdb.a
           retention-days: 1
   commit:
     runs-on: ubuntu-latest
@@ -132,7 +132,7 @@ jobs:
           rm -f deps/darwin_arm64/libduckdb.a
           rm -f deps/linux_amd64/libduckdb.a
           rm -f deps/linux_arm64/libduckdb.a
-          rm -f deps/windows_amd64/libduckdb_*.a
+          rm -f deps/windows_amd64/libduckdb.a
           rm -f deps/freebsd_amd64/libduckdb.a
           rm -f duckdb.h
       - uses: actions/download-artifact@v3
@@ -163,22 +163,6 @@ jobs:
         with:
           name: freebsd_amd64
           path: deps/freebsd_amd64
-      - shell: bash
-        run: |
-          cat cgo_static.go
-          sed -i '11s/libduckdb_*.a//' cgo_static.go
-          cat cgo_static.go
-          for file in deps/windows_amd64/*.a; do file=${file%.a}; sed -i "11s/LDFLAGS: /LDFLAGS: -l${file#deps/windows_amd64/lib} /" cgo_static.go; done
-          cat cgo_static.go
-      - shell: bash
-        run: |
-          git add deps/darwin_amd64/libduckdb.a
-          git add deps/darwin_arm64/libduckdb.a
-          git add deps/linux_amd64/libduckdb.a
-          git add deps/linux_arm64/libduckdb.a
-          git add deps/windows_amd64/libduckdb_*.a
-          git add deps/freebsd_amd64/libduckdb.a
-          git add cgo_static.go
       - name: Push static libraries
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

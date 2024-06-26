@@ -11,8 +11,8 @@ examples:
 
 .PHONY: test
 test:
-	go test -v -x -race -count=1 .
-
+	go test -v -count=1 .
+	
 .PHONY: deps.header
 deps.header:
 	git clone -b ${DUCKDB_BRANCH} --depth 1 ${DUCKDB_REPO}
@@ -83,14 +83,7 @@ deps.windows.amd64: duckdb
 	cd duckdb/build/release/bundle && \
 		${AR} cr ../libduckdb_bundle.a *.obj
 
-	mkdir tmp
-	mv duckdb/build/release/libduckdb_bundle.a tmp/libduckdb_bundle.a
-	cd tmp && ${AR} -x libduckdb_bundle.a
-	rm tmp/libduckdb_bundle.a	
-	ls tmp
-	num=0; for file in tmp/*.obj; echo $$file+hey; ${AR} cr tmp/libduckdb_$$num.a $$file; num=$$((num+1)); done
-
-	cp tmp/libduckdb_*.a deps/windows_amd64/
+	cp duckdb/build/release/libduckdb_bundle.a deps/windows_amd64/libduckdb.a
 
 .PHONY: deps.freebsd.amd64
 deps.freebsd.amd64: duckdb
