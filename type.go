@@ -4,6 +4,12 @@ package duckdb
 #include <duckdb.h>
 */
 import "C"
+import "time"
+
+type SaveTypes interface {
+	~bool | ~int8 | ~int16 | ~int32 | ~int64 | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~float32 | ~float64 | time.Time | UUID | ~string | ~[]byte
+}
+
 
 // Type wraps the corresponding DuckDB type enum.
 type Type C.duckdb_type
@@ -97,3 +103,4 @@ var typeToStringMap = map[Type]string{
 	TYPE_ANY:          "ANY",
 	TYPE_VARINT:       "VARINT",
 }
+

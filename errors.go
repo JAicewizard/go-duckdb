@@ -56,6 +56,10 @@ func interfaceIsNilError(interfaceName string) error {
 func duplicateNameError(name string) error {
 	return fmt.Errorf("%s: %s", duplicateNameErrMsg, name)
 }
+func invalidTableFunctionError() error {
+	return fmt.Errorf(invalidTabpleFunctionMsg)
+}
+
 
 const (
 	driverErrMsg           = "database/sql/driver"
@@ -70,6 +74,7 @@ const (
 	unknownTypeErrMsg      = "unknown type"
 	interfaceIsNilErrMsg   = "interface is nil"
 	duplicateNameErrMsg    = "duplicate name"
+	invalidTabpleFunctionMsg = "table function was rejected by duckdb for unknown reason"
 )
 
 var (
