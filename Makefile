@@ -9,6 +9,7 @@ install:
 examples:
 	go run examples/simple/main.go
 	go run examples/appender/main.go
+	go run examples/udtf/main.go
 
 .PHONY: test
 test:
