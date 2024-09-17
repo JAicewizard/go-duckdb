@@ -64,14 +64,14 @@ type (
 	}
 
 	threadedTableSource interface {
-		Columns() ([]ColumnMetaData, error)
+		Columns() []ColumnMetaData
 		Init() ThreadedTableSourceInitData
 		Cardinality() *CardinalityData
 		NewLocalState() any
 	}
 
 	tableSource interface {
-		Columns() ([]ColumnMetaData, error)
+		Columns() []ColumnMetaData
 		Init()
 		Cardinality() *CardinalityData
 	}
@@ -217,13 +217,7 @@ func udfBindTyped[T tableSource](info C.duckdb_bind_info) {
 		return
 	}
 
-	columns, err := instance.Columns()
-	if err != nil {
-		errstr := C.CString(err.Error())
-		defer C.free(unsafe.Pointer(errstr))
-		C.duckdb_bind_set_error(info, errstr)
-		return
-	}
+	columns := instance.Columns()
 
 	instanceData := tableFunctionData{
 		fun:        instance,
