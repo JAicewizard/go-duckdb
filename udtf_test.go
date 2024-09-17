@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 )
 
@@ -34,6 +35,12 @@ type (
 		count int64
 	}
 
+	parallelIncTableUDF struct {
+		lock    *sync.Mutex
+		claimed int64
+		n       int64
+	}
+
 	structTableUDF struct {
 		n     int64
 		count int64
@@ -41,6 +48,11 @@ type (
 
 	structTableUDFT struct {
 		I int64
+	}
+
+	parallelIncTableLocal struct {
+		start int64
+		end   int64
 	}
 
 	pushdownTableUDF struct {
@@ -67,6 +79,10 @@ var (
 			query: "SELECT * FROM %s(2048)",
 		},
 		{
+			udf:   &parallelIncTableUDF{},
+			name:  "incTableUDTF",
+			query: "SELECT * FROM %s(2048) ORDER BY result",
+		}, {
 			udf:   &structTableUDF{},
 			name:  "structTableUDTF",
 			query: "SELECT * FROM %s(2048)",
@@ -92,8 +108,8 @@ var (
 )
 
 var (
-	Ti64, _           = NewTypeInfo(TYPE_BIGINT)
-	TStructTableUDFT  = makeStructTableUDFT()
+	Ti64, _          = NewTypeInfo(TYPE_BIGINT)
+	TStructTableUDFT = makeStructTableUDFT()
 )
 
 func makeStructTableUDFT() TypeInfo {
@@ -148,6 +164,80 @@ func (d *incTableUDF) GetTypes() []any {
 func (d *incTableUDF) Cardinality() *CardinalityData {
 	return nil
 }
+
+func BindParallelIncTableUDF(namedArgs map[string]any, args ...interface{}) (ThreadedRowTableSource, error) {
+	return &parallelIncTableUDF{
+		lock:  &sync.Mutex{},
+		claimed: 0,
+		n:     args[0].(int64),
+	}, nil
+}
+
+func (d *parallelIncTableUDF) Columns() []ColumnMetaData {
+	return []ColumnMetaData{
+		{Name: "result", T: Ti64},
+	}
+}
+
+func (d *parallelIncTableUDF) Init() ThreadedTableSourceInitData {
+	return ThreadedTableSourceInitData{
+		MaxThreads: 8,
+	}
+}
+
+func (d *parallelIncTableUDF) NewLocalState() any {
+	return parallelIncTableLocal{
+		start: 0,
+		end:   0,
+	}
+}
+
+func (d *parallelIncTableUDF) FillRow(localState any, row Row) (bool, error) {
+	state := localState.(parallelIncTableLocal)
+	if state.start > state.end {
+		// claim a new "work" unit
+		d.lock.Lock()
+		remaining := d.claimed - d.n
+		if remaining <= 0 {
+			// no more work to be done :(
+			d.lock.Unlock()
+			return false, nil
+		} else if remaining >= 2024 {
+			remaining = 2024
+		}
+		state.start = d.claimed
+		d.claimed += remaining
+		state.end = d.claimed
+		d.lock.Unlock()
+	}
+	state.start++
+	err := SetRowValue(row, 0, state.start)
+	return true, err
+}
+
+func (d *parallelIncTableUDF) GetValue(r, c int) any {
+	return int64(r + 1)
+}
+
+func (d *parallelIncTableUDF) GetTypes() []any {
+	return []any{
+		int(0),
+	}
+}
+
+func (d *parallelIncTableUDF) Cardinality() *CardinalityData {
+	return nil
+}
+
+func (d *parallelIncTableUDF) GetFunction() RowTableFunction {
+	return RowTableFunction{
+		Config: TableFunctionConfig{
+			Arguments: []TypeInfo{Ti64},
+		},
+		BindArguments: BindIncTableUDF,
+	}
+}
+
 
 func (d *structTableUDF) GetFunction() RowTableFunction {
 	return RowTableFunction{
@@ -214,7 +304,7 @@ func BindPushdownTableUDF(namedArgs map[string]any, args ...interface{}) (RowTab
 	}, nil
 }
 
-func (d *pushdownTableUDF) Columns() []ColumnMetaData{
+func (d *pushdownTableUDF) Columns() []ColumnMetaData {
 	return []ColumnMetaData{
 		{Name: "result", T: Ti64},
 		{Name: "result2", T: Ti64},
@@ -429,7 +519,7 @@ func singleTableUDF[T TableFunction](t *testing.T, fun rowUDFTest[T]) {
 	}
 }
 
-func BenchmarkTableUDF(b *testing.B) {
+func BenchmarkRowTableUDF(b *testing.B) {
 	b.StopTimer()
 	var err error
 	db, err := sql.Open("duckdb", "?access_mode=READ_WRITE")
@@ -445,7 +535,31 @@ func BenchmarkTableUDF(b *testing.B) {
 	}
 	b.StartTimer()
 	for n := 0; n < b.N; n++ {
-		rows, err := db.QueryContext(context.Background(), "SELECT * FROM whoo(2048)")
+		rows, err := db.QueryContext(context.Background(), "SELECT * FROM whoo(2048*64)")
+		if err != nil {
+			b.Fatal(err)
+		}
+		defer rows.Close()
+	}
+}
+
+func BenchmarkChunkTableUDF(b *testing.B) {
+	b.StopTimer()
+	var err error
+	db, err := sql.Open("duckdb", "?access_mode=READ_WRITE")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer db.Close()
+	conn, _ := db.Conn(context.Background())
+	var fun chunkIncTableUDF
+	err = RegisterTableUDF(conn, "whoo", fun.GetFunction())
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.StartTimer()
+	for n := 0; n < b.N; n++ {
+		rows, err := db.QueryContext(context.Background(), "SELECT * FROM whoo(2048*64)")
 		if err != nil {
 			b.Fatal(err)
 		}

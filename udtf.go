@@ -306,7 +306,7 @@ func udf_row_callback(info C.duckdb_function_info, output C.duckdb_data_chunk) {
 	}
 
 	row := Row{
-		chunk:      chunk,
+		chunk:      &chunk,
 		projection: instance.projection,
 	}
 

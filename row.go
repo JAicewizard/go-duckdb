@@ -9,7 +9,7 @@ import "C"
 type (
 	// Row represents one row in duckdb. It references the vectors underneeth.
 	Row struct {
-		chunk      DataChunk
+		chunk      *DataChunk
 		r          C.idx_t
 		projection []int
 	}
@@ -24,12 +24,13 @@ func (r Row) IsProjected(c int) bool {
 // Returns an error when the setting the value failled.
 // If the row is not projected, nil will be returned, no matter the type.
 func SetRowValue[T any](row Row, c int, val T) error {
-	if !row.IsProjected(c) {
+	projectedRowIdx := row.projection[c]
+	if projectedRowIdx < 0 || projectedRowIdx >= len(row.chunk.columns) {
 		// we want to allow setting to columns that are not projected,
 		// it should just be a nop.
 		return nil
 	}
-	vec := row.chunk.columns[row.projection[c]]
+	vec := row.chunk.columns[projectedRowIdx]
 	return setVectorVal(&vec, row.r, val)
 }
 
